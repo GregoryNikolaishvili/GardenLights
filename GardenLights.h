@@ -96,7 +96,7 @@ const byte RELAY_LIGHT_FRONT_YARD = 9;
 const byte RELAY_LIGHT_GAZEBO = 10;
 const byte RELAY_LIGHT_SIDE_YARD = 11;
 
-typedef struct OnOffSettingStructure {
+struct OnOffSettingStructure {
 
 	bool isActive;
 	int onOffset; // min. + is after sunset, - = before sunset

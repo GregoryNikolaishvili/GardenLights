@@ -19,13 +19,13 @@ void InitEthernet()
 {
 	Serial.println(F("Starting ethernet.."));
 
-	//Ethernet.begin(mac, ip);
+	Ethernet.begin(mac, ip);
 	//W5100.setRetransmissionTime(0x07D0);
 	//W5100.setRetransmissionCount(3);
-	//delay(2000);
+	delay(2000);
 
-	//Serial.print(F("IP Address: "));
-	//Serial.println(Ethernet.localIP());
+	Serial.print(F("IP Address: "));
+	Serial.println(Ethernet.localIP());
 
 	//Serial.print(F("Chip revision: "));
 	//Serial.println(enc.getrev());
@@ -33,15 +33,15 @@ void InitEthernet()
 
 void InitMqtt()
 {
-	//ReconnectMqtt();
+	ReconnectMqtt();
 }
 
 void ProcessMqtt()
 {
-	//mqttClient.loop();
+	mqttClient.loop();
 }
 
-void PublishMqtt(char* topic, char* message, int len, boolean retained)
+void PublishMqtt(const char* topic, const char* message, int len, boolean retained)
 {
 	Serial.print(F("Publish. topic="));
 	Serial.print(topic);
@@ -53,56 +53,56 @@ void PublishMqtt(char* topic, char* message, int len, boolean retained)
 		Serial.print(message[i]);
 	Serial.println();
 
-	mqttClient.publish(topic, (byte*)message, len, retained);
+	mqttClient.publish(topic, (const byte*)message, len, retained);
 }
 
 void ReconnectMqtt() {
 
-	//if (!mqttClient.connected()) {
-	//	publishInitialState = true;
+	if (!mqttClient.connected()) {
+		publishInitialState = true;
 
-	//	Serial.print("Connecting to MQTT broker...");
+		Serial.print("Connecting to MQTT broker...");
 
-	//	wdt_reset();
-	//	// Attempt to connect
-	//	if (mqttClient.connect("LC controller", "cha/sys/LC controller", 1, true, "disconnected")) {
-	//		Serial.println("connected");
+		wdt_reset();
+		// Attempt to connect
+		if (mqttClient.connect("LC controller", "cha/sys/LC controller", 1, true, "disconnected")) {
+			Serial.println("connected");
 
-	//		wdt_reset();
-	//		// Once connected, publish an announcement...
-	//		mqttClient.publish("cha/sys/LC controller", "connected", true);  // Publish ethernet connected status to MQTT topic
+			wdt_reset();
+			// Once connected, publish an announcement...
+			mqttClient.publish("cha/sys/LC controller", "connected", true);  // Publish ethernet connected status to MQTT topic
 
-	//		wdt_reset();
-	//		// ... and resubscribe
-	//		mqttClient.subscribe("chac/lc/#", 1);           // Subscribe to a MQTT topic, qos = 1
+			wdt_reset();
+			// ... and resubscribe
+			mqttClient.subscribe("chac/lc/#", 1);           // Subscribe to a MQTT topic, qos = 1
 
-	//		//mqttClient.publish("cha/hub/gettime", "chac/lc/settime");     // request time
+			//mqttClient.publish("cha/hub/gettime", "chac/lc/settime");     // request time
 
-	//		wdt_reset();
-	//		PublishControllerState();
-	//		PublishSettings();
-	//		PublishNamesAndOrder();
-	//		PublishAllStates(false, true);
-	//	}
-	//	else {
-	//		Serial.print("failed, rc=");
-	//		Serial.println(mqttClient.state());
+			wdt_reset();
+			PublishControllerState();
+			PublishSettings();
+			PublishNamesAndOrder();
+			PublishAllStates(false, true);
+		}
+		else {
+			Serial.print("failed, rc=");
+			Serial.println(mqttClient.state());
 
-	//		//      wdt_reset();
-	//		//      
-	//		//      enc.powerOff();
-	//		//      delay(2000);
-	//		//      wdt_reset();
-	//		//      
-	//		//      enc.powerOn();
-	//		//      delay(2000);
-	//		//      wdt_reset();
-	//		//      
-	//		//      Ethernet.begin(mac, ip);
-	//		//      delay(2000);
-	//	}
-	//}
-	//wdt_reset();
+			//      wdt_reset();
+			//      
+			//      enc.powerOff();
+			//      delay(2000);
+			//      wdt_reset();
+			//      
+			//      enc.powerOn();
+			//      delay(2000);
+			//      wdt_reset();
+			//      
+			//      Ethernet.begin(mac, ip);
+			//      delay(2000);
+		}
+	}
+	wdt_reset();
 }
 
 void PublishControllerState()
@@ -127,7 +127,7 @@ void PublishAllStates(bool isRefresh, bool isInitialState) {
 
 	if (isRefresh)
 	{
-		char* topic = "cha/lc/refresh";
+		const char* topic = "cha/lc/refresh";
 		PublishMqtt(topic, buffer, RELAY_COUNT, false);
 	}
 }
@@ -138,7 +138,8 @@ void PublishLightState(byte id, bool value)
 {
 	if (!mqttClient.connected()) return;
 
-	char* topic = "cha/lc/rs/?";
+	char topic[12];
+	strcpy(topic, "cha/lc/rs/?");
 	topic[10] = byteToHexChar(id);
 	PublishMqtt(topic, value ? "1" : "0", 1, true);
 }
@@ -147,7 +148,7 @@ void PublishSettings()
 {
 	if (!mqttClient.connected()) return;
 
-	char* topic = "cha/lc/settings";
+	const char* topic = "cha/lc/settings";
 	int idx = 0;
 
 	buffer[idx++] = automaticMode ? 'T' : 'F';
@@ -166,8 +167,7 @@ void PublishNamesAndOrder()
 {
 	if (!mqttClient.connected()) return;
 
-	char* topic = "cha/lc/names";
-	int idx = 0;
+	const char* topic = "cha/lc/names";
 
 	int length = eeprom_read_word((uint16_t *)STORAGE_ADDRESS_DATA);
 	Serial.print("load name & order data. len=");
@@ -267,13 +267,23 @@ void callback(char* topic, byte * payload, unsigned int len) {
 			int yr, month, day;
 			int hr, min, sec;
 
-			yr = 2000 + (*data++ - '0') * 10 + (*data++ - '0');
-			month = (*data++ - '0') * 10 + (*data++ - '0');
-			day = (*data++ - '0') * 10 + (*data++ - '0');
-			*data++;
-			hr = (*data++ - '0') * 10 + (*data++ - '0');
-			min = (*data++ - '0') * 10 + (*data++ - '0');
-			sec = (*data++ - '0') * 10 + (*data++ - '0');
+			yr = 2000 + (*data++ - '0') * 10;
+			yr += (*data++ - '0');
+
+			month = (*data++ - '0') * 10;
+			month += (*data++ - '0');
+
+			day = (*data++ - '0') * 10;
+			day += (*data++ - '0');
+
+			data++;
+
+			hr = (*data++ - '0') * 10;
+			hr += (*data++ - '0');
+			min = (*data++ - '0') * 10;
+			min += (*data++ - '0');
+			sec = (*data++ - '0') * 10;
+			sec += (*data++ - '0');
 
 			setTime(hr, min, sec, day, month, yr);
 			RTC.set(now());

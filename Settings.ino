@@ -100,8 +100,8 @@ void resetAlarms(int tag)
       time_t tm_on = getOnTime(onOff);
       time_t tm_off = getOffTime(onOff);
 
-      Alarm.alarmRepeat(tm_on, relayOnCheckMode, "Relay ON", id);
-      Alarm.alarmRepeat(tm_off, relayOffCheckMode, "Relay OFF", id);
+      Alarm.alarmRepeat(tm_on, relayOnCheckMode, "Relay ON", (int)id);
+      Alarm.alarmRepeat(tm_off, relayOffCheckMode, "Relay OFF", (int)id);
 
       Serial.print("Relay #");
       Serial.print(id);
@@ -127,7 +127,7 @@ void freeAlarms()
   }
 }
 
-void relayOnCheckMode(byte id)
+void relayOnCheckMode(int id)
 {
   if (automaticMode)
     relayOn(id);
@@ -139,7 +139,7 @@ void relayOnCheckMode(byte id)
   showNextEvent();
 }
 
-void relayOffCheckMode(byte id)
+void relayOffCheckMode(int id)
 {
   if (automaticMode)
     relayOff(id);

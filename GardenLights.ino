@@ -13,8 +13,8 @@
 #include <DS1307RTC.h>				// http://www.pjrc.com/teensy/td_libs_DS1307RTC.html
 #include <Sunrise.h>				// http://www.andregoncalves.info/ag_blog/?p=47
 
-#include <Ethernet.h>
-//#include <UIPEthernet.h>    // https://github.com/ntruchsess/arduino_uip
+//#include <Ethernet.h>
+#include <UIPEthernet.h>    // https://github.com/ntruchsess/arduino_uip
 #include <PubSubClient.h>   // https://github.com/knolleary/pubsubclient
 
 #include <avr/wdt.h>
@@ -184,7 +184,7 @@ void loop()
   //if ((_current_millis < previousMillis) || (_current_millis - previousMillis >= 500))
   if (dt >= 500)
   {
-	wdt_reset();
+	  wdt_reset();
 
 	  // save the last time we blinked the LED
     previousMillis = _current_millis;
