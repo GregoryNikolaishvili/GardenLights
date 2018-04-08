@@ -288,7 +288,7 @@ void callback(char* topic, byte * payload, unsigned int len) {
 			setTime(hr, min, sec, day, month, yr);
 			RTC.set(now());
 			printDateTime(&Serial, now());
-
+      Serial.println();
 			//PublishAllStates(false, true);
 		}
 		return;
