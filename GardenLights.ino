@@ -1,3 +1,7 @@
+#define REQUIRESALARMS false // FOR DS18B20 library
+#define MQTT_MAX_PACKET_SIZE 256 // FOR PubSubClient library
+#define MQTT_SOCKET_TIMEOUT 5 // FOR PubSubClient library
+
 #define _DEBUG
 
 #define USE_SPECIALIST_METHODS // For TimeAlarms Class
@@ -7,14 +11,13 @@
 #include <Wire.h>
 #include <SPI.h>
 
-#include <Time.h>					// http://www.pjrc.com/teensy/td_libs_Time.html
-#include <TimeAlarms.h>				// http://www.pjrc.com/teensy/td_libs_TimeAlarms.html
+#include <TimeLib.h>				// https://github.com/PaulStoffregen/Time
+#include <TimeAlarms.h>				// https://github.com/PaulStoffregen/TimeAlarms
+#include <DS1307RTC.h>				// https://github.com/PaulStoffregen/DS1307RTC
 #include <Button.h>					// https://github.com/t3db0t/Button/blob/master/readme.md
-#include <DS1307RTC.h>				// http://www.pjrc.com/teensy/td_libs_DS1307RTC.html
 #include <Sunrise.h>				// http://www.andregoncalves.info/ag_blog/?p=47
 
-//#include <Ethernet.h>
-#include <UIPEthernet.h>    // https://github.com/ntruchsess/arduino_uip
+#include <UIPEthernet.h>    // https://github.com/UIPEthernet/UIPEthernet
 #include <PubSubClient.h>   // https://github.com/knolleary/pubsubclient
 
 #include <avr/wdt.h>
