@@ -38,16 +38,24 @@ void recalcSunriseSunset()
 	byte sunriseHH = mySunrise.Hour();
 	byte sunriseMM = mySunrise.Minute();
 	Serial.print("Sunrise: ");
+	if (sunriseHH < 10)
+		Serial.print('0');
 	Serial.print(sunriseHH);
 	Serial.print(":");
+	if (sunriseMM < 10)
+		Serial.print('0');
 	Serial.println(sunriseMM);
 
 	mySunrise.Set(mm, dd); // (month,day) - january=1
 	byte sunsetHH = mySunrise.Hour();
 	byte sunsetMM = mySunrise.Minute();
 	Serial.print("Sunset: ");
+	if (sunsetHH < 10)
+		Serial.print('0');
 	Serial.print(sunsetHH);
 	Serial.print(":");
+	if (sunsetMM < 10)
+		Serial.print('0');
 	Serial.println(sunsetMM);
 
 	sunriseMin = sunriseHH * 60 + sunriseMM;
