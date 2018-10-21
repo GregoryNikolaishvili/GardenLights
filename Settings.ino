@@ -70,7 +70,7 @@ void saveSettings(bool publish)
 
 void settingsChanged(bool publish)
 {
-  resetAlarms(0);
+  resetAlarms(0, 0);
 
   if (publish)
 	  PublishSettings();
@@ -83,13 +83,13 @@ void saveData(const void* data, int length)
 }
 
 
-void resetAlarms(int tag)
+void resetAlarms(int tag, int tag2)
 {
   recalcSunriseSunset();
 
   freeAlarms();
 
-  Alarm.alarmRepeat(0, resetAlarms, NULL, 0); // 00:00:00 at midnight. eventName = NULL means don't show in next event
+  Alarm.alarmRepeat(0, resetAlarms, NULL); // 00:00:00 at midnight. eventName = NULL means don't show in next event
 
   OnOffSettingStructure* onOff;
   for (byte id = 0; id < RELAY_COUNT; id++)
@@ -127,7 +127,7 @@ void freeAlarms()
   }
 }
 
-void relayOnCheckMode(int id)
+void relayOnCheckMode(int id, int tag2)
 {
   if (automaticMode)
     relayOn(id);
@@ -139,7 +139,7 @@ void relayOnCheckMode(int id)
   showNextEvent();
 }
 
-void relayOffCheckMode(int id)
+void relayOffCheckMode(int id, int tag2)
 {
   if (automaticMode)
     relayOff(id);
