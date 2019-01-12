@@ -56,6 +56,12 @@ void PublishMqtt(const char* topic, const char* message, int len, boolean retain
 	mqttClient.publish(topic, (const byte*)message, len, retained);
 }
 
+void PublishMqttAlive(const char* topic)
+{
+	setHexInt32(buffer, now(), 0);
+	PublishMqtt(topic, buffer, 8, false);
+}
+
 void ReconnectMqtt() {
 
 	if (!mqttClient.connected()) {
@@ -82,7 +88,7 @@ void ReconnectMqtt() {
 			PublishControllerState();
 			PublishSettings();
 			PublishNamesAndOrder();
-			PublishAllStates(false, true);
+			PublishAllStates(true);
 		}
 		else {
 			Serial.print("failed, rc=");
@@ -114,21 +120,12 @@ void PublishControllerState()
 }
 
 
-void PublishAllStates(bool isRefresh, bool isInitialState) {
+void PublishAllStates(bool isInitialState) {
 	if (!mqttClient.connected()) return;
 
 	for (byte id = 0; id < RELAY_COUNT; id++)
 	{
-		if (isRefresh)
-			buffer[id] = isRelayOn(id) ? '1' : '0';
-		else
-			PublishLightState(id, isRelayOn(id));
-	}
-
-	if (isRefresh)
-	{
-		const char* topic = "cha/lc/refresh";
-		PublishMqtt(topic, buffer, RELAY_COUNT, false);
+		PublishLightState(id, isRelayOn(id));
 	}
 }
 
@@ -219,7 +216,8 @@ void callback(char* topic, byte * payload, unsigned int len) {
 
 	if (strcmp(topic, "chac/lc/refresh") == 0)
 	{
-		PublishAllStates(true, false);
+		PublishAllStates(false);
+		PublishMqttAlive("cha/lc/alive");
 		return;
 	}
 
@@ -288,7 +286,7 @@ void callback(char* topic, byte * payload, unsigned int len) {
 			setTime(hr, min, sec, day, month, yr);
 			RTC.set(now());
 			printDateTime(&Serial, now());
-      Serial.println();
+			Serial.println();
 			//PublishAllStates(false, true);
 		}
 		return;

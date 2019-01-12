@@ -25,6 +25,13 @@ void printHexInt16(Print* client, int x)
   printHexByte(client, byte(x & 0xFF));
 }
 
+int setHexInt32(char *buffer, long x, int idx)
+{
+	idx = setHexInt16(buffer, x >> 16, idx);
+	idx = setHexInt16(buffer, x & 0xFFFF, idx);
+	return idx;
+}
+
 void print2Digits(Print* client, byte x)
 {
   if (x < 10)

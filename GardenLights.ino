@@ -94,7 +94,7 @@ void setup()
 
   Serial.begin(115200);
   Serial.println();
-  Serial.println(F("Initializing.. ver. 1.0.2"));
+  Serial.println(F("Initializing.. ver. 1.0.7"));
 
   pinMode(PIN_BLINKING_LED, OUTPUT);
   digitalWrite(PIN_BLINKING_LED, LOW); // Turn on led at start
@@ -262,8 +262,8 @@ void oncePer5Second()
 
 void oncePer1Minute()
 {
-	if (secondTicks > 0) // do not publish on startup
-		PublishAllStates(true, false);
+	//if (secondTicks > 0) // do not publish on startup
+	//	PublishAllStates(false);
 }
 
 
