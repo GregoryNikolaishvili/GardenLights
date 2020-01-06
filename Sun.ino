@@ -16,10 +16,8 @@ void InitSun()
 			break;
 	} while (millis() - startMillis < 1000);
 
-#ifdef _DEBUG
 	printDateTime(&Serial, now());
 	Serial.println();
-#endif
 	// Time
 
 	mySunrise.Civil();
