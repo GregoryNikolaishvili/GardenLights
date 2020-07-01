@@ -56,11 +56,11 @@ void PublishMqtt(const char* topic, const char* message, int len, boolean retain
 	mqttClient.publish(topic, (const byte*)message, len, retained);
 }
 
-void PublishMqttAlive(const char* topic)
-{
-	setHexInt32(buffer, now(), 0);
-	PublishMqtt(topic, buffer, 8, false);
-}
+//void PublishMqttAlive(const char* topic)
+//{
+//	setHexInt32(buffer, now(), 0);
+//	PublishMqtt(topic, buffer, 8, false);
+//}
 
 void ReconnectMqtt() {
 
@@ -71,23 +71,23 @@ void ReconnectMqtt() {
 
 		wdt_reset();
 		// Attempt to connect
-		if (mqttClient.connect("LC controller", "cha/sys/LC controller", 1, true, "disconnected")) {
+		if (mqttClient.connect("light", "hub/controller/light", 1, true, "{\"state\":\"disconnected\"}")) {
 			Serial.println("connected");
 
 			wdt_reset();
 			// Once connected, publish an announcement...
-			mqttClient.publish("cha/sys/LC controller", "connected", true);  // Publish ethernet connected status to MQTT topic
+			mqttClient.publish("hub/controller/light", "{\"state\":\"connected\"}", true);  // Publish ethernet connected status to MQTT topic
 
 			wdt_reset();
 			// ... and resubscribe
 			mqttClient.subscribe("chac/lc/#", 1);           // Subscribe to a MQTT topic, qos = 1
 
-			//mqttClient.publish("cha/hub/gettime", "chac/lc/settime");     // request time
+			mqttClient.publish("hubcommand/gettime", "chac/lc/settime", false);     // request time
 
 			wdt_reset();
-			PublishControllerState();
+			//PublishControllerState();
 			PublishSettings();
-			PublishNamesAndOrder();
+			//PublishNamesAndOrder();
 			PublishAllStates(true);
 		}
 		else {
@@ -111,13 +111,13 @@ void ReconnectMqtt() {
 	wdt_reset();
 }
 
-void PublishControllerState()
-{
-	if (!mqttClient.connected()) return;
-
-	setHexInt16(buffer, lightsControlerState, 0);
-	PublishMqtt("cha/lc/state", buffer, 4, true);
-}
+//void PublishControllerState()
+//{
+//	if (!mqttClient.connected()) return;
+//
+//	setHexInt16(buffer, lightsControlerState, 0);
+//	PublishMqtt("cha/lc/state", buffer, 4, true);
+//}
 
 
 void PublishAllStates(bool isInitialState) {
@@ -160,24 +160,24 @@ void PublishSettings()
 	PublishMqtt(topic, buffer, idx, true);
 }
 
-void PublishNamesAndOrder()
-{
-	if (!mqttClient.connected()) return;
-
-	const char* topic = "cha/lc/names";
-
-	int length = eeprom_read_word((uint16_t *)STORAGE_ADDRESS_DATA);
-	Serial.print("load name & order data. len=");
-	Serial.println(length);
-
-	for (int i = 0; i < length; i++)
-	{
-		byte b = eeprom_read_byte((uint8_t *)(STORAGE_ADDRESS_DATA + 2 + i));
-		buffer[i] = b;
-	}
-
-	PublishMqtt(topic, buffer, length, true);
-}
+//void PublishNamesAndOrder()
+//{
+//	if (!mqttClient.connected()) return;
+//
+//	const char* topic = "cha/lc/names";
+//
+//	int length = eeprom_read_word((uint16_t *)STORAGE_ADDRESS_DATA);
+//	Serial.print("load name & order data. len=");
+//	Serial.println(length);
+//
+//	for (int i = 0; i < length; i++)
+//	{
+//		byte b = eeprom_read_byte((uint8_t *)(STORAGE_ADDRESS_DATA + 2 + i));
+//		buffer[i] = b;
+//	}
+//
+//	PublishMqtt(topic, buffer, length, true);
+//}
 
 
 void callback(char* topic, byte * payload, unsigned int len) {
@@ -217,7 +217,7 @@ void callback(char* topic, byte * payload, unsigned int len) {
 	if (strcmp(topic, "chac/lc/refresh") == 0)
 	{
 		PublishAllStates(false);
-		PublishMqttAlive("cha/lc/alive");
+		//PublishMqttAlive("cha/lc/alive");
 		return;
 	}
 
@@ -247,13 +247,13 @@ void callback(char* topic, byte * payload, unsigned int len) {
 	}
 
 
-	if (strcmp(topic, "chac/lc/settings/names") == 0)
-	{
-		saveData(payload, len);
+	//if (strcmp(topic, "chac/lc/settings/names") == 0)
+	//{
+	//	saveData(payload, len);
 
-		PublishNamesAndOrder();
-		return;
-	}
+	//	PublishNamesAndOrder();
+	//	return;
+	//}
 
 	if (strcmp(topic, "chac/lc/settime") == 0)
 	{

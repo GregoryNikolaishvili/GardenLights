@@ -2,7 +2,8 @@
 
 const byte RELAY_COUNT = 12;
 const byte RF_CHANNEL_COUNT = 12;
-const byte BUTTON_COUNT = 17; // total = 20. 3 is free
+//const byte BUTTON_COUNT = 17; // total = 20. 3 is free
+const byte BUTTON_COUNT = 16; // total = 20. 4 is free
 
 const byte PIN_BLINKING_LED = 2; // LED_BUILTIN;
 const byte PIN_MANUAL_MODE_LED = 3;
@@ -72,13 +73,13 @@ const byte BTN_OUT_3 = 8;
 const byte BTN_OUT_4 = 3;
 const byte BTN_OUT_5 = 2;
 
-const byte BTN_HOUSE_1 = 1;
-const byte BTN_HOUSE_2 = 0;
-const byte BTN_HOUSE_3 = 7;
-const byte BTN_HOUSE_4 = 6;
-const byte BTN_HOUSE_5 = 5;
-const byte BTN_HOUSE_6 = 4;
-const byte BTN_HOUSE_7 = 16;
+//const byte BTN_HOUSE_1 = 1;
+//const byte BTN_HOUSE_2 = 0;
+//const byte BTN_HOUSE_3 = 7;
+//const byte BTN_HOUSE_4 = 6;
+//const byte BTN_HOUSE_5 = 5;
+//const byte BTN_HOUSE_6 = 4;
+//const byte BTN_HOUSE_7 = 16;
 
 
 const byte RELAY_LIGHT_GREEN = 0;
@@ -108,6 +109,6 @@ struct OnOffSettingStructure {
 };
 
 
-const unsigned int ERR_GENERAL = 1;
+// const unsigned int ERR_GENERAL = 1;
 
-#define state_is_error_bit_set(__mask__) ((lightsControlerState & (__mask__)) != 0)
+//#define state_is_error_bit_set(__mask__) ((lightsControlerState & (__mask__)) != 0)

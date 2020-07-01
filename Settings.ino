@@ -6,7 +6,7 @@ int sunsetMin;
 
 const byte DEF_SETTINGS_VERSION = 0x00;
 const int STORAGE_ADDRESS_SETTINGS = 0;
-const int STORAGE_ADDRESS_DATA = 100;
+//const int STORAGE_ADDRESS_DATA = 100;
 
 const char OFF_SUNRISE = 'S';
 const char OFF_TIME = 'T';
@@ -42,7 +42,7 @@ void readSettings()
     eeprom_update_byte((uint8_t *)STORAGE_ADDRESS_SETTINGS, DEF_SETTINGS_VERSION);
     saveSettings(false);
 
-    saveData("00180;1;2;3;4;5;6;7;8;9;A;B;", 28);
+    //saveData("00180;1;2;3;4;5;6;7;8;9;A;B;", 28);
   }
   else
   {
@@ -76,15 +76,15 @@ void settingsChanged(bool publish)
 	  PublishSettings();
 }
 
-void saveData(const void* data, int length)
-{
-  if (length > 256)
-    length = 256;
-
-  eeprom_update_word((uint16_t *)STORAGE_ADDRESS_DATA, length);
-  eeprom_update_block(data, (void*)(STORAGE_ADDRESS_DATA + 2), length);
-}
-
+//void saveData(const void* data, int length)
+//{
+//  if (length > 256)
+//    length = 256;
+//
+//  eeprom_update_word((uint16_t *)STORAGE_ADDRESS_DATA, length);
+//  eeprom_update_block(data, (void*)(STORAGE_ADDRESS_DATA + 2), length);
+//}
+//
 
 void resetAlarms(int tag, int tag2)
 {
