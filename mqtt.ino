@@ -1,3 +1,4 @@
+#include "mqtt.h"
 //#include "utility/w5500.h"
 
 //#define UIP_CONNECT_TIMEOUT      3
@@ -12,8 +13,6 @@ PubSubClient mqttClient("192.168.1.23", 1883, callback, ethClient);     // Initi
 #define MQTT_BUFFER_SIZE 256
 
 char buffer[MQTT_BUFFER_SIZE];
-
-boolean publishInitialState = true;
 
 void InitEthernet()
 {
@@ -65,7 +64,6 @@ void PublishMqtt(const char* topic, const char* message, int len, boolean retain
 void ReconnectMqtt() {
 
 	if (!mqttClient.connected()) {
-		publishInitialState = true;
 
 		Serial.print("Connecting to MQTT broker...");
 
@@ -160,6 +158,19 @@ void PublishSettings()
 	PublishMqtt(topic, buffer, idx, true);
 }
 
+void PublishTime()
+{
+	if (!mqttClient.connected()) return;
+
+	const char* topic = "cha/lc/time";
+	int idx = 0;
+
+	time_t _now = now();
+
+	int len = setHexInt32(buffer, now(), 0);
+	PublishMqtt(topic, buffer, idx, false);
+}
+
 //void PublishNamesAndOrder()
 //{
 //	if (!mqttClient.connected()) return;
@@ -232,13 +243,13 @@ void callback(char* topic, byte * payload, unsigned int len) {
 			onOffSettings[id].isActive = *p != 'F';
 			p++;
 
-			onOffSettings[id].onOffset = readHex(p, 4);
+			onOffSettings[id].onOffset = readHexInt16(p);
 			p += 4;
 
 			onOffSettings[id].offType = *p;
 			p++;
 
-			onOffSettings[id].offValue = readHex(p, 4);
+			onOffSettings[id].offValue = readHexInt32(p);
 			p += 4;
 		}
 
@@ -246,6 +257,54 @@ void callback(char* topic, byte * payload, unsigned int len) {
 		return;
 	}
 
+	if (strcmp(topic, "chac/lc/gettime2") == 0)
+	{
+		PublishTime();
+		return;
+	}
+
+	if (strcmp(topic, "chac/lc/settime2") == 0)
+	{
+		char* data = (char*)payload;
+		long tm = readHexInt32(data);
+
+		setTime(tm);
+		RTC.set(now());
+		printDateTime(&Serial, now());
+		Serial.println();
+		return;
+	}
+
+	if (strcmp(topic, "chac/lc/settime") == 0)
+	{
+		char* data = (char*)payload;
+		int yr, month, day;
+		int hr, min, sec;
+
+		yr = 2000 + (*data++ - '0') * 10;
+		yr += (*data++ - '0');
+
+		month = (*data++ - '0') * 10;
+		month += (*data++ - '0');
+
+		day = (*data++ - '0') * 10;
+		day += (*data++ - '0');
+
+		data++;
+
+		hr = (*data++ - '0') * 10;
+		hr += (*data++ - '0');
+		min = (*data++ - '0') * 10;
+		min += (*data++ - '0');
+		sec = (*data++ - '0') * 10;
+		sec += (*data++ - '0');
+
+		setTime(hr, min, sec, day, month, yr);
+		RTC.set(now());
+		printDateTime(&Serial, now());
+		Serial.println();
+		return;
+	}
 
 	//if (strcmp(topic, "chac/lc/settings/names") == 0)
 	//{
@@ -254,42 +313,5 @@ void callback(char* topic, byte * payload, unsigned int len) {
 	//	PublishNamesAndOrder();
 	//	return;
 	//}
-
-	if (strcmp(topic, "chac/lc/settime") == 0)
-	{
-		if (publishInitialState)
-		{
-			publishInitialState = false;
-
-			char* data = (char*)payload;
-			int yr, month, day;
-			int hr, min, sec;
-
-			yr = 2000 + (*data++ - '0') * 10;
-			yr += (*data++ - '0');
-
-			month = (*data++ - '0') * 10;
-			month += (*data++ - '0');
-
-			day = (*data++ - '0') * 10;
-			day += (*data++ - '0');
-
-			data++;
-
-			hr = (*data++ - '0') * 10;
-			hr += (*data++ - '0');
-			min = (*data++ - '0') * 10;
-			min += (*data++ - '0');
-			sec = (*data++ - '0') * 10;
-			sec += (*data++ - '0');
-
-			setTime(hr, min, sec, day, month, yr);
-			RTC.set(now());
-			printDateTime(&Serial, now());
-			Serial.println();
-			//PublishAllStates(false, true);
-		}
-		return;
-	}
 
 }

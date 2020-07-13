@@ -53,23 +53,30 @@ char byteToHexChar(byte b)
   return b + '0';
 }
 
-int readHex(const char* s, byte length)
+int readHexInt16(const char* s)
 {
   int value = 0;
+  int length = 4;
   while (length > 0)
   {
-    //Serial.print(value);
-    //Serial.print(" : ");
-    //Serial.print(*s);
-    //Serial.print(" : ");
     value = (value << 4) | hexCharToByte(*s++);
-    //Serial.println(value);
     length--;
   }
 
   return value;
 }
 
+int readHexInt32(const char* s)
+{
+	long value = 0;
+	int length = 8;
+	while (length > 0)
+	{
+		value = (value << 4) | hexCharToByte(*s++);
+		length--;
+	}
+	return value;
+}
 
 void printDateTime(Print* client, time_t value)
 {

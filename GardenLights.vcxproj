@@ -103,6 +103,7 @@
     <ClInclude Include="GardenLights.h">
       <FileType>CppCode</FileType>
     </ClInclude>
+    <ClInclude Include="mqtt.h" />
     <ClInclude Include="__vm\.GardenLights.vsarduino.h" />
   </ItemGroup>
   <PropertyGroup>

@@ -30,5 +30,8 @@
     <ClInclude Include="GardenLights.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mqtt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
