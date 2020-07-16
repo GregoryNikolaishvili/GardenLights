@@ -1,4 +1,4 @@
-#include "mqtt.h"
+﻿#include "mqtt.h"
 //#include "utility/w5500.h"
 
 //#define UIP_CONNECT_TIMEOUT      3
@@ -163,12 +163,8 @@ void PublishTime()
 	if (!mqttClient.connected()) return;
 
 	const char* topic = "cha/lc/time";
-	int idx = 0;
-
-	time_t _now = now();
-
 	int len = setHexInt32(buffer, now(), 0);
-	PublishMqtt(topic, buffer, idx, false);
+	PublishMqtt(topic, buffer, len, false);
 }
 
 //void PublishNamesAndOrder()
@@ -217,6 +213,11 @@ void callback(char* topic, byte * payload, unsigned int len) {
 		return;
 	}
 
+	if (strcmp(topic, "chac/lc/refresh") == 0)
+	{
+		PublishAllStates(false);
+		return;
+	}
 
 	if (strcmp(topic, "chac/lc/mode") == 0)
 	{
@@ -225,13 +226,28 @@ void callback(char* topic, byte * payload, unsigned int len) {
 		return;
 	}
 
-	if (strcmp(topic, "chac/lc/refresh") == 0)
+	if (strncmp(topic, "chac/lc/settings2/", 18) == 0)
 	{
-		PublishAllStates(false);
-		//PublishMqttAlive("cha/lc/alive");
+		byte id = hexCharToByte(topic[18]);
+		char* p = (char*)payload;
+
+		onOffSettings[id].isActive = *p != 'F';
+		p++;
+
+		onOffSettings[id].onOffset = readHexInt16(p);
+		p += 4;
+
+		onOffSettings[id].offType = *p;
+		p++;
+
+		onOffSettings[id].offValue = readHexInt16(p);
+		//p += 4;
+
+		saveSettings(true);
 		return;
 	}
 
+	//TODO ეს ძველია და წასაშლელია
 	if (strcmp(topic, "chac/lc/settings") == 0)
 	{
 		char* p = (char*)payload;
@@ -249,7 +265,7 @@ void callback(char* topic, byte * payload, unsigned int len) {
 			onOffSettings[id].offType = *p;
 			p++;
 
-			onOffSettings[id].offValue = readHexInt32(p);
+			onOffSettings[id].offValue = readHexInt16(p);
 			p += 4;
 		}
 

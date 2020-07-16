@@ -56,7 +56,7 @@ char byteToHexChar(byte b)
 int readHexInt16(const char* s)
 {
   int value = 0;
-  int length = 4;
+  byte length = 4;
   while (length > 0)
   {
     value = (value << 4) | hexCharToByte(*s++);
@@ -66,10 +66,10 @@ int readHexInt16(const char* s)
   return value;
 }
 
-int readHexInt32(const char* s)
+long readHexInt32(const char* s)
 {
 	long value = 0;
-	int length = 8;
+	byte length = 8;
 	while (length > 0)
 	{
 		value = (value << 4) | hexCharToByte(*s++);
