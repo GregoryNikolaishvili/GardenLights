@@ -215,6 +215,11 @@ boolean getRelayStateByTime(int onTime, int offTime)
   time_now = time_now - previousMidnight(time_now);
   int itime_now = time_now / SECS_PER_MIN;
 
+//  Serial.print("onTime: ");
+//  Serial.println(onTime);
+//  Serial.print("offTime: ");
+//  Serial.println(offTime);
+
   boolean b;
   if (onTime < offTime)
   {

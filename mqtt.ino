@@ -1,4 +1,4 @@
-﻿#include "mqtt.h"
+#include "mqtt.h"
 //#include "utility/w5500.h"
 
 //#define UIP_CONNECT_TIMEOUT      3
@@ -109,15 +109,6 @@ void ReconnectMqtt() {
 	wdt_reset();
 }
 
-//void PublishControllerState()
-//{
-//	if (!mqttClient.connected()) return;
-//
-//	setHexInt16(buffer, lightsControlerState, 0);
-//	PublishMqtt("cha/lc/state", buffer, 4, true);
-//}
-
-
 void PublishAllStates(bool isInitialState) {
 	if (!mqttClient.connected()) return;
 
@@ -126,8 +117,6 @@ void PublishAllStates(bool isInitialState) {
 		PublishLightState(id, isRelayOn(id));
 	}
 }
-
-
 
 void PublishLightState(byte id, bool value)
 {
@@ -244,32 +233,8 @@ void callback(char* topic, byte * payload, unsigned int len) {
 		//p += 4;
 
 		saveSettings(true);
-		return;
-	}
 
-	//TODO ეს ძველია და წასაშლელია
-	if (strcmp(topic, "chac/lc/settings") == 0)
-	{
-		char* p = (char*)payload;
-
-		automaticMode = *p++ != 'F';
-
-		for (byte id = 0; id < RELAY_COUNT; id++)
-		{
-			onOffSettings[id].isActive = *p != 'F';
-			p++;
-
-			onOffSettings[id].onOffset = readHexInt16(p);
-			p += 4;
-
-			onOffSettings[id].offType = *p;
-			p++;
-
-			onOffSettings[id].offValue = readHexInt16(p);
-			p += 4;
-		}
-
-		saveSettings(true);
+    PublishLightState(id, isRelayOn(id));
 		return;
 	}
 

@@ -16,12 +16,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GardenLights.ino" />
+    <None Include="mqtt.ino" />
+    <None Include="mqtt_enc28j60.ino" />
     <None Include="Settings.ino" />
     <None Include="Sun.ino" />
     <None Include="Utils.ino" />
     <None Include="Web.ino" />
-    <None Include="mqtt.ino" />
-    <None Include="mqtt_enc28j60.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.GardenLights.vsarduino.h">
