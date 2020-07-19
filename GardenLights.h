@@ -1,4 +1,5 @@
 #include <arduino.h>
+#include <TimeLib.h>
 
 const byte RELAY_COUNT = 12;
 const byte RF_CHANNEL_COUNT = 12;
@@ -108,7 +109,8 @@ struct OnOffSettingStructure {
 	// for OFF_DURATION + is duration
 };
 
+struct OnOffTimesStructure {
 
-// const unsigned int ERR_GENERAL = 1;
-
-//#define state_is_error_bit_set(__mask__) ((lightsControlerState & (__mask__)) != 0)
+	time_t onTime;
+	time_t offTime;
+};

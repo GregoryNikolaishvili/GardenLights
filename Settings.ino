@@ -1,5 +1,6 @@
 bool automaticMode = false;
 OnOffSettingStructure onOffSettings[RELAY_COUNT];
+OnOffTimesStructure onOffTimes[RELAY_COUNT];
 
 int sunriseMin;
 int sunsetMin;
@@ -95,9 +96,13 @@ void resetAlarms(int tag, int tag2)
   Alarm.alarmRepeat(0, resetAlarms, NULL); // 00:00:00 at midnight. eventName = NULL means don't show in next event
 
   OnOffSettingStructure* onOff;
+  OnOffTimesStructure* onOffTime;
+
   for (byte id = 0; id < RELAY_COUNT; id++)
   {
     onOff = &onOffSettings[id];
+	onOffTime = &onOffTimes[id];
+
     if (onOff->isActive)
     {
       time_t tm_on = getOnTime(onOff);
@@ -105,6 +110,9 @@ void resetAlarms(int tag, int tag2)
 
       Alarm.alarmRepeat(tm_on, relayOnCheckMode, "Relay ON", (int)id);
       Alarm.alarmRepeat(tm_off, relayOffCheckMode, "Relay OFF", (int)id);
+
+	  onOffTime->onTime = tm_on;
+	  onOffTime->offTime = tm_off;
 
       Serial.print("Relay #");
       Serial.print(id);
@@ -115,6 +123,11 @@ void resetAlarms(int tag, int tag2)
       printTime(&Serial, tm_off);
       Serial.println();
     }
+	else
+	{
+		onOffTime->onTime = 0;
+		onOffTime->offTime = 0;
+	}
   }
 
   if (automaticMode)

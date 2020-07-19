@@ -142,6 +142,9 @@ void PublishSettings()
 		idx = setHexInt16(buffer, onOffSettings[i].onOffset, idx);
 		buffer[idx++] = onOffSettings[i].offType;
 		idx = setHexInt16(buffer, onOffSettings[i].offValue, idx);
+
+		idx = setHexInt32(buffer, onOffTimes[i].onTime, idx);
+		idx = setHexInt32(buffer, onOffTimes[i].offTime, idx);
 	}
 
 	PublishMqtt(topic, buffer, idx, true);
