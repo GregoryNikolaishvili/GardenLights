@@ -125,6 +125,7 @@ void PublishLightState(byte id, bool value)
 	char topic[12];
 	strcpy(topic, "cha/lc/rs/?");
 	topic[10] = byteToHexChar(id);
+
 	PublishMqtt(topic, value ? "1" : "0", 1, true);
 }
 
@@ -143,8 +144,8 @@ void PublishSettings()
 		buffer[idx++] = onOffSettings[i].offType;
 		idx = setHexInt16(buffer, onOffSettings[i].offValue, idx);
 
-		idx = setHexInt32(buffer, onOffTimes[i].onTime, idx);
-		idx = setHexInt32(buffer, onOffTimes[i].offTime, idx);
+		idx = setHexInt16(buffer, onOffTimes[i].onTime, idx);
+		idx = setHexInt16(buffer, onOffTimes[i].offTime, idx);
 	}
 
 	PublishMqtt(topic, buffer, idx, true);
@@ -237,7 +238,7 @@ void callback(char* topic, byte * payload, unsigned int len) {
 
 		saveSettings(true);
 
-    PublishLightState(id, isRelayOn(id));
+		PublishLightState(id, isRelayOn(id));
 		return;
 	}
 

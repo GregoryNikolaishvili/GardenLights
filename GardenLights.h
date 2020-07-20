@@ -1,5 +1,4 @@
 #include <arduino.h>
-#include <TimeLib.h>
 
 const byte RELAY_COUNT = 12;
 const byte RF_CHANNEL_COUNT = 12;
@@ -111,6 +110,6 @@ struct OnOffSettingStructure {
 
 struct OnOffTimesStructure {
 
-	time_t onTime;
-	time_t offTime;
+	int onTime;
+	int offTime;
 };
