@@ -190,6 +190,18 @@ void callback(char* topic, byte * payload, unsigned int len) {
 	Serial.write(payload, len);
 	Serial.println();
 
+  if (strcmp(topic, "chac/lc/gettime2") == 0)
+  {
+    PublishTime();
+    return;
+  }
+
+  if (strcmp(topic, "chac/lc/refresh") == 0)
+  {
+    PublishAllStates(false);
+    return;
+  }
+
 	if (len == 0)
 		return;
 
@@ -203,12 +215,6 @@ void callback(char* topic, byte * payload, unsigned int len) {
 		//Serial.println(value);
 
 		relaySet(id, value);
-		return;
-	}
-
-	if (strcmp(topic, "chac/lc/refresh") == 0)
-	{
-		PublishAllStates(false);
 		return;
 	}
 
@@ -239,12 +245,6 @@ void callback(char* topic, byte * payload, unsigned int len) {
 		saveSettings(true);
 
 		PublishLightState(id, isRelayOn(id));
-		return;
-	}
-
-	if (strcmp(topic, "chac/lc/gettime2") == 0)
-	{
-		PublishTime();
 		return;
 	}
 
@@ -290,13 +290,4 @@ void callback(char* topic, byte * payload, unsigned int len) {
 		Serial.println();
 		return;
 	}
-
-	//if (strcmp(topic, "chac/lc/settings/names") == 0)
-	//{
-	//	saveData(payload, len);
-
-	//	PublishNamesAndOrder();
-	//	return;
-	//}
-
 }
