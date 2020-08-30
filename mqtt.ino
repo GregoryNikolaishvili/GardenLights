@@ -1,14 +1,16 @@
 #include "mqtt.h"
 //#include "utility/w5500.h"
 
-//#define UIP_CONNECT_TIMEOUT      3
-//  UIP_CONNECT_TIMEOUT was set to 3 in uipethernet-conf.h
+#define UIP_CONNECT_TIMEOUT	2
+//  UIP_CONNECT_TIMEOUT was set to -1 in uipethernet-conf.h
 
 byte mac[] = { 0x54, 0x34, 0x41, 0x30, 0x30, 0x09 };
 IPAddress ip(192, 168, 1, 9);
 
 EthernetClient ethClient;
 PubSubClient mqttClient("192.168.1.23", 1883, callback, ethClient);     // Initialize a MQTT mqttClient instance
+
+bool doLog = true;
 
 #define MQTT_BUFFER_SIZE 256
 
@@ -32,6 +34,8 @@ void InitEthernet()
 
 void InitMqtt()
 {
+	mqttClient.setBufferSize(320);
+	mqttClient.setSocketTimeout(5);
 	ReconnectMqtt();
 }
 
@@ -42,24 +46,29 @@ void ProcessMqtt()
 
 void PublishMqtt(const char* topic, const char* message, int len, boolean retained)
 {
-	Serial.print(F("Publish. topic="));
-	Serial.print(topic);
-	Serial.print(F(", length="));
-	Serial.print(len);
+	if (doLog)
+	{
+		Serial.print(F("Publish. topic="));
+		Serial.print(topic);
+		Serial.print(F(", length="));
+		Serial.print(len);
 
-	Serial.print(F(", payload="));
-	for (int i = 0; i < len; i++)
-		Serial.print(message[i]);
-	Serial.println();
-
+		Serial.print(F(", payload="));
+		for (int i = 0; i < len; i++)
+			Serial.print(message[i]);
+		Serial.println();
+	}
 	mqttClient.publish(topic, (const byte*)message, len, retained);
 }
 
-//void PublishMqttAlive(const char* topic)
-//{
-//	setHexInt32(buffer, now(), 0);
-//	PublishMqtt(topic, buffer, 8, false);
-//}
+void PublishAlive()
+{
+	if (!mqttClient.connected()) return;
+
+	const char* topic = "cha/lc/alive";
+	int len = setHexInt32(buffer, now(), 0);
+	PublishMqtt(topic, buffer, len, false);
+}
 
 void ReconnectMqtt() {
 
@@ -80,13 +89,11 @@ void ReconnectMqtt() {
 			// ... and resubscribe
 			mqttClient.subscribe("chac/lc/#", 1);           // Subscribe to a MQTT topic, qos = 1
 
-			mqttClient.publish("hubcommand/gettime", "chac/lc/settime", false);     // request time
+			mqttClient.publish("hubcommand/gettime2", "chac/lc/settime2", false);     // request time
 
 			wdt_reset();
-			//PublishControllerState();
 			PublishSettings();
-			//PublishNamesAndOrder();
-			PublishAllStates(true);
+			PublishAllStates();
 		}
 		else {
 			Serial.print("failed, rc=");
@@ -109,13 +116,17 @@ void ReconnectMqtt() {
 	wdt_reset();
 }
 
-void PublishAllStates(bool isInitialState) {
+void PublishAllStates() {
 	if (!mqttClient.connected()) return;
+
+	doLog = false;
 
 	for (byte id = 0; id < RELAY_COUNT; id++)
 	{
 		PublishLightState(id, isRelayOn(id));
 	}
+
+	doLog = true;
 }
 
 void PublishLightState(byte id, bool value)
@@ -190,17 +201,23 @@ void callback(char* topic, byte * payload, unsigned int len) {
 	Serial.write(payload, len);
 	Serial.println();
 
-  if (strcmp(topic, "chac/lc/gettime2") == 0)
-  {
-    PublishTime();
-    return;
-  }
+	if (strcmp(topic, "chac/lc/alive") == 0)
+	{
+		PublishAlive();
+		return;
+	}
 
-  if (strcmp(topic, "chac/lc/refresh") == 0)
-  {
-    PublishAllStates(false);
-    return;
-  }
+	if (strcmp(topic, "chac/lc/gettime2") == 0)
+	{
+		PublishTime();
+		return;
+	}
+
+	if (strcmp(topic, "chac/lc/refresh") == 0)
+	{
+		PublishAllStates();
+		return;
+	}
 
 	if (len == 0)
 		return;
