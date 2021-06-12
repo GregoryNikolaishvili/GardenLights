@@ -1,8 +1,4 @@
-#define REQUIRESALARMS false // FOR DS18B20 library
-#define MQTT_MAX_PACKET_SIZE 300 // FOR PubSubClient library
-#define MQTT_SOCKET_TIMEOUT 5 // FOR PubSubClient library
-
-#define _DEBUG
+//#define _DEBUG
 
 #define USE_SPECIALIST_METHODS // For TimeAlarms Class
 
