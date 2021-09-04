@@ -247,7 +247,7 @@ void callback(char* topic, byte * payload, unsigned int len) {
 		byte id = hexCharToByte(topic[18]);
 		char* p = (char*)payload;
 
-		onOffSettings[id].isActive = *p != 'F';
+		onOffSettings[id].isActive = *p != '0';
 		p++;
 
 		onOffSettings[id].onOffset = readHexInt16(p);
