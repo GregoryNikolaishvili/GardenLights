@@ -70,7 +70,7 @@ byte relayPins[RELAY_COUNT] = {
   PIN_LIGHT_SIDE_YARD   // 12
 };
 
-Button *RfButtons[RF_CHANNEL_COUNT] = { &rfPin1, &rfPin2, &rfPin3, &rfPin4, &rfPin5, &rfPin6, &rfPin7, &rfPin8, &rfPin9, &rfPin10, &rfPin11, &rfPin12 };
+Button* RfButtons[RF_CHANNEL_COUNT] = { &rfPin1, &rfPin2, &rfPin3, &rfPin4, &rfPin5, &rfPin6, &rfPin7, &rfPin8, &rfPin9, &rfPin10, &rfPin11, &rfPin12 };
 
 byte RfButtonsRelayMapping[RF_CHANNEL_COUNT - 2] = {
   RELAY_LIGHT_HOUSE_FRONT, RELAY_LIGHT_FRONT_YARD, RELAY_LIGHT_GAZEBO, RELAY_LIGHT_SIDE_YARD,
@@ -78,7 +78,7 @@ byte RfButtonsRelayMapping[RF_CHANNEL_COUNT - 2] = {
 };
 
 //Button *PushButtons[BUTTON_COUNT] = { &btnPin1, &btnPin2, &btnPin3, &btnPin4, &btnPin5, &btnPin6, &btnPin7, &btnPin8, &btnPin9, &btnPin10, &btnPin11, &btnPin12, &btnPin13, &btnPin14, &btnPin15, &btnPin16, &btnPin17 };
-Button *PushButtons[BUTTON_COUNT] = { &btnPin1, &btnPin2, &btnPin3, &btnPin4, &btnPin5, &btnPin6, &btnPin7, &btnPin8, &btnPin9, &btnPin10, &btnPin11, &btnPin12, &btnPin13, &btnPin14, &btnPin15, &btnPin16 };
+Button* PushButtons[BUTTON_COUNT] = { &btnPin1, &btnPin2, &btnPin3, &btnPin4, &btnPin5, &btnPin6, &btnPin7, &btnPin8, &btnPin9, &btnPin10, &btnPin11, &btnPin12, &btnPin13, &btnPin14, &btnPin15, &btnPin16 };
 
 unsigned long halfSecondTicks = 0;
 unsigned long secondTicks = 0;
@@ -91,7 +91,7 @@ void setup()
 
 	Serial.begin(115200);
 	Serial.println();
-	Serial.println(F("Initializing.. ver. 2.1.0"));
+	Serial.println(F("Initializing.. ver. 3.0.6"));
 
 	pinMode(PIN_BLINKING_LED, OUTPUT);
 	digitalWrite(PIN_BLINKING_LED, LOW); // Turn on led at start
@@ -240,7 +240,6 @@ void oncePerHalfSecond(void)
 		oncePerSecond();
 }
 
-
 void oncePerSecond()
 {
 	if ((secondTicks % 5) == 0)
@@ -262,7 +261,6 @@ void oncePer1Minute()
 	if (secondTicks > 0) // do not publish on startup
 		PublishAllStates();
 }
-
 
 void RfButtonPressed(byte btn)
 {
@@ -308,54 +306,54 @@ void ButtonPressed(byte btn)
 	if (btn >= BUTTON_COUNT)
 		return;
 
-//	bool isShiftOff = !btnPin17.isPressed(false);
-//#ifdef _DEBUG
-//	Serial.print("Shift: ");
-//	Serial.println(!isShiftOff);
-//#endif
+	//	bool isShiftOff = !btnPin17.isPressed(false);
+	//#ifdef _DEBUG
+	//	Serial.print("Shift: ");
+	//	Serial.println(!isShiftOff);
+	//#endif
 	bool state;
 
 	switch (btn)
 	{
-	//case BTN_HOUSE_1:
-	//	if (isShiftOff)
-	//		relayToggle(RELAY_LIGHT_HOUSE_FRONT);
-	//	else
-	//		relayToggle(RELAY_LIGHT_UPPER_YARD);
-	//	break;
-	//case BTN_HOUSE_2:
-	//	if (isShiftOff)
-	//		relayToggle(RELAY_LIGHT_FRONT_YARD);
-	//	else
-	//		relayToggle(RELAY_LIGHT_STADIUM);
-	//	break;
-	//case BTN_HOUSE_3:
-	//	if (isShiftOff)
-	//		relayToggle(RELAY_LIGHT_GAZEBO);
-	//	else
-	//		relayToggle(RELAY_LIGHT_GREEN);
-	//	break;
-	//case BTN_HOUSE_4:
-	//	if (isShiftOff)
-	//		relayToggle(RELAY_LIGHT_SIDE_YARD);
-	//	else
-	//		relayToggle(RELAY_XXXX);
-	//	break;
-	//case BTN_HOUSE_5:
-	//	if (isShiftOff)
-	//		relayToggle(RELAY_LIGHT_BACK_YARD);
-	//	else
-	//		relayToggle(RELAY_YYYY);
-	//	break;
-	//case BTN_HOUSE_6:
-	//	if (isShiftOff)
-	//		relayToggle(RELAY_LIGHT_DOWN_YARD);
-	//	else
-	//		relayToggle(RELAY_ZZZZ);
-	//	break;
-	//case BTN_HOUSE_7:
-	//	// Shift
-	//	break;
+		//case BTN_HOUSE_1:
+		//	if (isShiftOff)
+		//		relayToggle(RELAY_LIGHT_HOUSE_FRONT);
+		//	else
+		//		relayToggle(RELAY_LIGHT_UPPER_YARD);
+		//	break;
+		//case BTN_HOUSE_2:
+		//	if (isShiftOff)
+		//		relayToggle(RELAY_LIGHT_FRONT_YARD);
+		//	else
+		//		relayToggle(RELAY_LIGHT_STADIUM);
+		//	break;
+		//case BTN_HOUSE_3:
+		//	if (isShiftOff)
+		//		relayToggle(RELAY_LIGHT_GAZEBO);
+		//	else
+		//		relayToggle(RELAY_LIGHT_GREEN);
+		//	break;
+		//case BTN_HOUSE_4:
+		//	if (isShiftOff)
+		//		relayToggle(RELAY_LIGHT_SIDE_YARD);
+		//	else
+		//		relayToggle(RELAY_XXXX);
+		//	break;
+		//case BTN_HOUSE_5:
+		//	if (isShiftOff)
+		//		relayToggle(RELAY_LIGHT_BACK_YARD);
+		//	else
+		//		relayToggle(RELAY_YYYY);
+		//	break;
+		//case BTN_HOUSE_6:
+		//	if (isShiftOff)
+		//		relayToggle(RELAY_LIGHT_DOWN_YARD);
+		//	else
+		//		relayToggle(RELAY_ZZZZ);
+		//	break;
+		//case BTN_HOUSE_7:
+		//	// Shift
+		//	break;
 
 	case BTN_GAZEBO_1:
 	case BTN_OUT_1:
@@ -383,7 +381,6 @@ void ButtonPressed(byte btn)
 		break;
 	}
 }
-
 
 void relaySet(byte id, bool state)
 {
@@ -430,7 +427,6 @@ bool isRelayOn(byte id)
 	return false;
 }
 
-
 //boolean state_set_error_bit(int mask)
 //{
 //	if (!state_is_error_bit_set(mask))
@@ -442,7 +438,6 @@ bool isRelayOn(byte id)
   //
 //	return false;
 //}
-
 
 //boolean state_clear_error_bit(int mask)
 //{

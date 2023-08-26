@@ -1,26 +1,30 @@
 #include "mqtt.h"
-//#include "utility/w5500.h"
 
 #define UIP_CONNECT_TIMEOUT	2
 //  UIP_CONNECT_TIMEOUT was set to -1 in uipethernet-conf.h
 
-byte mac[] = { 0x54, 0x34, 0x41, 0x30, 0x30, 0x09 };
-IPAddress ip(192, 168, 1, 9);
+const char* MqttUserName = "cha";
+const char* MqttPassword = "BatoBato02@";
+
+IPAddress ip(192, 168, 68, 9);
+IPAddress gateway(192, 168, 68, 1);
+IPAddress subnet(255, 255, 252, 0);
 
 EthernetClient ethClient;
-PubSubClient mqttClient("192.168.1.23", 1883, callback, ethClient);     // Initialize a MQTT mqttClient instance
+PubSubClient mqttClient("192.168.68.23", 1883, callback, ethClient);     // Initialize a MQTT mqttClient instance
+
+byte mac[] = { 0x54, 0x34, 0x41, 0x30, 0x30, 0x09 };
 
 bool doLog = true;
 
 #define MQTT_BUFFER_SIZE 256
-
 char buffer[MQTT_BUFFER_SIZE];
 
 void InitEthernet()
 {
 	Serial.println(F("Starting ethernet.."));
 
-	Ethernet.begin(mac, ip);
+	Ethernet.begin(mac, ip, gateway, gateway, subnet);
 	//W5100.setRetransmissionTime(0x07D0);
 	//W5100.setRetransmissionCount(3);
 	delay(2000);
@@ -71,14 +75,12 @@ void PublishAlive()
 }
 
 void ReconnectMqtt() {
-
 	if (!mqttClient.connected()) {
-
 		Serial.print("Connecting to MQTT broker...");
 
 		wdt_reset();
 		// Attempt to connect
-		if (mqttClient.connect("light", "hub/controller/light", 1, true, "{\"state\":\"disconnected\"}")) {
+		if (mqttClient.connect("light", MqttUserName, MqttPassword, "hub/controller/light", 1, true, "{\"state\":\"disconnected\"}")) {
 			Serial.println("connected");
 
 			wdt_reset();
@@ -100,15 +102,15 @@ void ReconnectMqtt() {
 			Serial.println(mqttClient.state());
 
 			//      wdt_reset();
-			//      
+			//
 			//      enc.powerOff();
 			//      delay(2000);
 			//      wdt_reset();
-			//      
+			//
 			//      enc.powerOn();
 			//      delay(2000);
 			//      wdt_reset();
-			//      
+			//
 			//      Ethernet.begin(mac, ip);
 			//      delay(2000);
 		}
@@ -190,9 +192,7 @@ void PublishTime()
 //	PublishMqtt(topic, buffer, length, true);
 //}
 
-
-void callback(char* topic, byte * payload, unsigned int len) {
-
+void callback(char* topic, byte* payload, unsigned int len) {
 	Serial.print("message arrived: topic='");
 	Serial.print(topic);
 	Serial.print("', length=");
@@ -269,7 +269,6 @@ void callback(char* topic, byte * payload, unsigned int len) {
 	{
 		char* data = (char*)payload;
 		long tm = readHexInt32(data);
-
 
 		setTime(tm + 4L * SECS_PER_HOUR);
 		RTC.set(now());
