@@ -10,7 +10,7 @@
 #include <TimeLib.h>				// https://github.com/PaulStoffregen/Time
 #include <TimeAlarms.h>				// https://github.com/PaulStoffregen/TimeAlarms
 #include <DS1307RTC.h>				// https://github.com/PaulStoffregen/DS1307RTC
-#include <Button.h>					// https://github.com/t3db0t/Button/blob/master/readme.md
+//#include <Button.h>					// https://github.com/t3db0t/Button/blob/master/readme.md
 #include <Sunrise.h>				// http://www.andregoncalves.info/ag_blog/?p=47
 
 #include <UIPEthernet.h>    // https://github.com/UIPEthernet/UIPEthernet
@@ -18,40 +18,38 @@
 
 #include <avr/wdt.h>
 
-Button rfPin1;
-Button rfPin2;
-Button rfPin3;
-Button rfPin4;
-Button rfPin5;
-Button rfPin6;
-Button rfPin7;
-Button rfPin8;
-Button rfPin9;
-Button rfPin10;
-Button rfPin11;
-Button rfPin12;
-
-Button btnPin1;
-Button btnPin2;
-Button btnPin3;
-Button btnPin4;
-
-Button btnPin5;
-Button btnPin6;
-Button btnPin7;
-Button btnPin8;
-
-Button btnPin9;
-Button btnPin10;
-Button btnPin11;
-Button btnPin12;
-
-Button btnPin13;
-Button btnPin14;
-Button btnPin15;
-Button btnPin16;
-
-//Button btnPin17;
+//Button rfPin1;
+//Button rfPin2;
+//Button rfPin3;
+//Button rfPin4;
+//Button rfPin5;
+//Button rfPin6;
+//Button rfPin7;
+//Button rfPin8;
+//Button rfPin9;
+//Button rfPin10;
+//Button rfPin11;
+//Button rfPin12;
+//
+//Button btnPin1;
+//Button btnPin2;
+//Button btnPin3;
+//Button btnPin4;
+//
+//Button btnPin5;
+//Button btnPin6;
+//Button btnPin7;
+//Button btnPin8;
+//
+//Button btnPin9;
+//Button btnPin10;
+//Button btnPin11;
+//Button btnPin12;
+//
+//Button btnPin13;
+//Button btnPin14;
+//Button btnPin15;
+//Button btnPin16;
 
 byte relayPins[RELAY_COUNT] = {
   PIN_LIGHT_GREEN,				// 1
@@ -70,15 +68,14 @@ byte relayPins[RELAY_COUNT] = {
   PIN_LIGHT_SIDE_YARD   // 12
 };
 
-Button* RfButtons[RF_CHANNEL_COUNT] = { &rfPin1, &rfPin2, &rfPin3, &rfPin4, &rfPin5, &rfPin6, &rfPin7, &rfPin8, &rfPin9, &rfPin10, &rfPin11, &rfPin12 };
+//Button* RfButtons[RF_CHANNEL_COUNT] = { &rfPin1, &rfPin2, &rfPin3, &rfPin4, &rfPin5, &rfPin6, &rfPin7, &rfPin8, &rfPin9, &rfPin10, &rfPin11, &rfPin12 };
 
-byte RfButtonsRelayMapping[RF_CHANNEL_COUNT - 2] = {
-  RELAY_LIGHT_HOUSE_FRONT, RELAY_LIGHT_FRONT_YARD, RELAY_LIGHT_GAZEBO, RELAY_LIGHT_SIDE_YARD,
-  RELAY_LIGHT_BACK_YARD, RELAY_LIGHT_UPPER_YARD, RELAY_LIGHT_DOWN_YARD, RELAY_LIGHT_STADIUM, RELAY_LIGHT_GREEN, RELAY_XXXX
-};
+//byte RfButtonsRelayMapping[RF_CHANNEL_COUNT - 2] = {
+//  RELAY_LIGHT_HOUSE_FRONT, RELAY_LIGHT_FRONT_YARD, RELAY_LIGHT_GAZEBO, RELAY_LIGHT_SIDE_YARD,
+//  RELAY_LIGHT_BACK_YARD, RELAY_LIGHT_UPPER_YARD, RELAY_LIGHT_DOWN_YARD, RELAY_LIGHT_STADIUM, RELAY_LIGHT_GREEN, RELAY_XXXX
+//};
 
-//Button *PushButtons[BUTTON_COUNT] = { &btnPin1, &btnPin2, &btnPin3, &btnPin4, &btnPin5, &btnPin6, &btnPin7, &btnPin8, &btnPin9, &btnPin10, &btnPin11, &btnPin12, &btnPin13, &btnPin14, &btnPin15, &btnPin16, &btnPin17 };
-Button* PushButtons[BUTTON_COUNT] = { &btnPin1, &btnPin2, &btnPin3, &btnPin4, &btnPin5, &btnPin6, &btnPin7, &btnPin8, &btnPin9, &btnPin10, &btnPin11, &btnPin12, &btnPin13, &btnPin14, &btnPin15, &btnPin16 };
+//Button* PushButtons[BUTTON_COUNT] = { &btnPin1, &btnPin2, &btnPin3, &btnPin4, &btnPin5, &btnPin6, &btnPin7, &btnPin8, &btnPin9, &btnPin10, &btnPin11, &btnPin12, &btnPin13, &btnPin14, &btnPin15, &btnPin16 };
 
 unsigned long halfSecondTicks = 0;
 unsigned long secondTicks = 0;
@@ -91,7 +88,7 @@ void setup()
 
 	Serial.begin(115200);
 	Serial.println();
-	Serial.println(F("Initializing.. ver. 3.0.6"));
+	Serial.println(F("Initializing.. ver. 3.0.7"));
 
 	pinMode(PIN_BLINKING_LED, OUTPUT);
 	digitalWrite(PIN_BLINKING_LED, LOW); // Turn on led at start
@@ -114,52 +111,47 @@ void setup()
 	InitSun(); // Sunrise / sunset
 
 	//// RF PINS
-	rfPin1.Begin(RF_PIN_1, BUTTON_PULLDOWN, false);
-	rfPin2.Begin(RF_PIN_2, BUTTON_PULLDOWN, false);
-	rfPin3.Begin(RF_PIN_3, BUTTON_PULLDOWN, false);
-	rfPin4.Begin(RF_PIN_4, BUTTON_PULLDOWN, false);
+//	rfPin1.Begin(RF_PIN_1, BUTTON_PULLDOWN, false);
+//	rfPin2.Begin(RF_PIN_2, BUTTON_PULLDOWN, false);
+//	rfPin3.Begin(RF_PIN_3, BUTTON_PULLDOWN, false);
+//	rfPin4.Begin(RF_PIN_4, BUTTON_PULLDOWN, false);
+//
+//	rfPin5.Begin(RF_PIN_5, BUTTON_PULLDOWN, false);
+//	rfPin6.Begin(RF_PIN_6, BUTTON_PULLDOWN, false);
+//	rfPin7.Begin(RF_PIN_7, BUTTON_PULLDOWN, false);
+//	rfPin8.Begin(RF_PIN_8, BUTTON_PULLDOWN, false);
+//
+//	rfPin9.Begin(RF_PIN_9, BUTTON_PULLDOWN, false);
+//	rfPin10.Begin(RF_PIN_10, BUTTON_PULLDOWN, false);
+//	rfPin11.Begin(RF_PIN_11, BUTTON_PULLDOWN, false);
+//	rfPin12.Begin(RF_PIN_12, BUTTON_PULLDOWN, false);
+//
+//	// SWITCH BUTTONS
+//	btnPin1.Begin(BUTTON_PIN_1, BUTTON_PULLUP, true);
+//	btnPin2.Begin(BUTTON_PIN_2, BUTTON_PULLUP, true);
+//	btnPin3.Begin(BUTTON_PIN_3, BUTTON_PULLUP, true);
+//	btnPin4.Begin(BUTTON_PIN_4, BUTTON_PULLUP, true);
+//
+//	btnPin5.Begin(BUTTON_PIN_5, BUTTON_PULLUP, true);
+//	btnPin6.Begin(BUTTON_PIN_6, BUTTON_PULLUP, true);
+//	btnPin7.Begin(BUTTON_PIN_7, BUTTON_PULLUP, true);
+//	btnPin8.Begin(BUTTON_PIN_8, BUTTON_PULLUP, true);
+//
+//	btnPin9.Begin(BUTTON_PIN_9, BUTTON_PULLUP, true);
+//	btnPin10.Begin(BUTTON_PIN_10, BUTTON_PULLUP, true);
+//	btnPin11.Begin(BUTTON_PIN_11, BUTTON_PULLUP, true);
+//	btnPin12.Begin(BUTTON_PIN_12, BUTTON_PULLUP, true);
+//
+//	btnPin13.Begin(BUTTON_PIN_13, BUTTON_PULLUP, true);
+//	btnPin14.Begin(BUTTON_PIN_14, BUTTON_PULLUP, true);
+//	btnPin15.Begin(BUTTON_PIN_15, BUTTON_PULLUP, true);
+//	btnPin16.Begin(BUTTON_PIN_16, BUTTON_PULLUP, true);
 
-	rfPin5.Begin(RF_PIN_5, BUTTON_PULLDOWN, false);
-	rfPin6.Begin(RF_PIN_6, BUTTON_PULLDOWN, false);
-	rfPin7.Begin(RF_PIN_7, BUTTON_PULLDOWN, false);
-	rfPin8.Begin(RF_PIN_8, BUTTON_PULLDOWN, false);
-
-	rfPin9.Begin(RF_PIN_9, BUTTON_PULLDOWN, false);
-	rfPin10.Begin(RF_PIN_10, BUTTON_PULLDOWN, false);
-	rfPin11.Begin(RF_PIN_11, BUTTON_PULLDOWN, false);
-	rfPin12.Begin(RF_PIN_12, BUTTON_PULLDOWN, false);
-
-	// SWITCH BUTTONS
-	btnPin1.Begin(BUTTON_PIN_1, BUTTON_PULLUP, true);
-	btnPin2.Begin(BUTTON_PIN_2, BUTTON_PULLUP, true);
-	btnPin3.Begin(BUTTON_PIN_3, BUTTON_PULLUP, true);
-	btnPin4.Begin(BUTTON_PIN_4, BUTTON_PULLUP, true);
-
-	btnPin5.Begin(BUTTON_PIN_5, BUTTON_PULLUP, true);
-	btnPin6.Begin(BUTTON_PIN_6, BUTTON_PULLUP, true);
-	btnPin7.Begin(BUTTON_PIN_7, BUTTON_PULLUP, true);
-	btnPin8.Begin(BUTTON_PIN_8, BUTTON_PULLUP, true);
-
-	btnPin9.Begin(BUTTON_PIN_9, BUTTON_PULLUP, true);
-	btnPin10.Begin(BUTTON_PIN_10, BUTTON_PULLUP, true);
-	btnPin11.Begin(BUTTON_PIN_11, BUTTON_PULLUP, true);
-	btnPin12.Begin(BUTTON_PIN_12, BUTTON_PULLUP, true);
-
-	btnPin13.Begin(BUTTON_PIN_13, BUTTON_PULLUP, true);
-	btnPin14.Begin(BUTTON_PIN_14, BUTTON_PULLUP, true);
-	btnPin15.Begin(BUTTON_PIN_15, BUTTON_PULLUP, true);
-	btnPin16.Begin(BUTTON_PIN_16, BUTTON_PULLUP, true);
-
-	//btnPin17.Begin(BUTTON_PIN_17, BUTTON_PULLUP, true);
-	//btnPin18.Begin(BUTTON_PIN_18, BUTTON_PULLUP, true);
-	//btnPin19.Begin(BUTTON_PIN_19, BUTTON_PULLUP, true);
-	//btnPin20.Begin(BUTTON_PIN_20, BUTTON_PULLUP, true);
-
-	for (byte i = 0; i < RF_CHANNEL_COUNT; i++)
-		RfButtons[i]->process();
-
-	for (byte i = 0; i < BUTTON_COUNT; i++)
-		PushButtons[i]->process();
+//	for (byte i = 0; i < RF_CHANNEL_COUNT; i++)
+//		RfButtons[i]->process();
+//
+//	for (byte i = 0; i < BUTTON_COUNT; i++)
+//		PushButtons[i]->process();
 
 	readSettings();
 
@@ -181,7 +173,6 @@ void loop()
 
 	uint32_t dt = previousMillis > _current_millis ? 1 + previousMillis + ~_current_millis : _current_millis - previousMillis;
 
-	//if ((_current_millis < previousMillis) || (_current_millis - previousMillis >= 500))
 	if (dt >= 500)
 	{
 		wdt_reset();
@@ -194,25 +185,20 @@ void loop()
 	//Serial.println("Ping..");
 	//delay(500);
 
-	// PROCESS SWITCH BUTTONS
-	for (byte i = 0; i < BUTTON_COUNT; i++)
-	{
-		if (PushButtons[i]->uniquePress())
-			ButtonPressed(i);
-	}
-
-	// PROCESS RF BUTTONS
-	for (byte i = 0; i < RF_CHANNEL_COUNT; i++)
-	{
-		if (RfButtons[i]->stateChanged())
-			RfButtonPressed(i);
-	}
-
-	//Serial.println(digitalRead(RF_PIN_12));
-	//Serial.println(RfButtons[11]->pin);
-	//Serial.println(RfButtons[11]->isPressed());
-
-	//ProcessWeb();
+//	// PROCESS SWITCH BUTTONS
+//	for (byte i = 0; i < BUTTON_COUNT; i++)
+//	{
+//		if (PushButtons[i]->uniquePress())
+//			ButtonPressed(i);
+//	}
+//
+//	// PROCESS RF BUTTONS
+//	for (byte i = 0; i < RF_CHANNEL_COUNT; i++)
+//	{
+//		if (RfButtons[i]->stateChanged())
+//			RfButtonPressed(i);
+//	}
+//
 
 	ProcessMqtt();
 
@@ -262,126 +248,126 @@ void oncePer1Minute()
 		PublishAllStates();
 }
 
-void RfButtonPressed(byte btn)
-{
-	if (btn >= RF_CHANNEL_COUNT)
-		return;
-
-	switch (btn)
-	{
-	case 10: // button 11
-		for (byte id = 0; id < RELAY_COUNT; id++)
-			relayOn(id);
-#ifdef _DEBUG
-		Serial.println("All Lights On");
-#endif
-		break;
-	case 11: // button 12
-		for (byte id = 0; id < RELAY_COUNT; id++)
-			relayOff(id);
-#ifdef _DEBUG
-		Serial.println("All Lights Off");
-#endif
-		break;
-	default:
-		byte relayId = RfButtonsRelayMapping[btn];
-#ifdef _DEBUG
-		Serial.print("Rf button pressed: ");
-		Serial.print(btn);
-		Serial.print(", Mapped to relay: ");
-		Serial.println(relayId);
-#endif
-		relayToggle(relayId);
-		break;
-	}
-}
-
-void ButtonPressed(byte btn)
-{
-#ifdef _DEBUG
-	Serial.print("Push button pressed: ");
-	Serial.println(btn);
-#endif
-
-	if (btn >= BUTTON_COUNT)
-		return;
-
-	//	bool isShiftOff = !btnPin17.isPressed(false);
-	//#ifdef _DEBUG
-	//	Serial.print("Shift: ");
-	//	Serial.println(!isShiftOff);
-	//#endif
-	bool state;
-
-	switch (btn)
-	{
-		//case BTN_HOUSE_1:
-		//	if (isShiftOff)
-		//		relayToggle(RELAY_LIGHT_HOUSE_FRONT);
-		//	else
-		//		relayToggle(RELAY_LIGHT_UPPER_YARD);
-		//	break;
-		//case BTN_HOUSE_2:
-		//	if (isShiftOff)
-		//		relayToggle(RELAY_LIGHT_FRONT_YARD);
-		//	else
-		//		relayToggle(RELAY_LIGHT_STADIUM);
-		//	break;
-		//case BTN_HOUSE_3:
-		//	if (isShiftOff)
-		//		relayToggle(RELAY_LIGHT_GAZEBO);
-		//	else
-		//		relayToggle(RELAY_LIGHT_GREEN);
-		//	break;
-		//case BTN_HOUSE_4:
-		//	if (isShiftOff)
-		//		relayToggle(RELAY_LIGHT_SIDE_YARD);
-		//	else
-		//		relayToggle(RELAY_XXXX);
-		//	break;
-		//case BTN_HOUSE_5:
-		//	if (isShiftOff)
-		//		relayToggle(RELAY_LIGHT_BACK_YARD);
-		//	else
-		//		relayToggle(RELAY_YYYY);
-		//	break;
-		//case BTN_HOUSE_6:
-		//	if (isShiftOff)
-		//		relayToggle(RELAY_LIGHT_DOWN_YARD);
-		//	else
-		//		relayToggle(RELAY_ZZZZ);
-		//	break;
-		//case BTN_HOUSE_7:
-		//	// Shift
-		//	break;
-
-	case BTN_GAZEBO_1:
-	case BTN_OUT_1:
-		relayToggle(RELAY_LIGHT_HOUSE_FRONT);
-		break;
-	case BTN_GAZEBO_2:
-	case BTN_OUT_2:
-		relayToggle(RELAY_LIGHT_FRONT_YARD);
-		break;
-	case BTN_GAZEBO_3:
-	case BTN_OUT_3:
-		relayToggle(RELAY_LIGHT_GAZEBO);
-		break;
-	case BTN_GAZEBO_4:
-	case BTN_OUT_4:
-		state = relayToggle(RELAY_LIGHT_SIDE_YARD);
-		relaySet(RELAY_LIGHT_BACK_YARD, state);
-		break;
-	case BTN_GAZEBO_5:
-	case BTN_OUT_5:
-		relayToggle(RELAY_LIGHT_DOWN_YARD);
-		break;
-
-	default:
-		break;
-	}
-}
-
+//void RfButtonPressed(byte btn)
+//{
+//	if (btn >= RF_CHANNEL_COUNT)
+//		return;
+//
+//	switch (btn)
+//	{
+//	case 10: // button 11
+//		for (byte id = 0; id < RELAY_COUNT; id++)
+//			relayOn(id);
+//#ifdef _DEBUG
+//		Serial.println("All Lights On");
+//#endif
+//		break;
+//	case 11: // button 12
+//		for (byte id = 0; id < RELAY_COUNT; id++)
+//			relayOff(id);
+//#ifdef _DEBUG
+//		Serial.println("All Lights Off");
+//#endif
+//		break;
+//	default:
+//		byte relayId = RfButtonsRelayMapping[btn];
+//#ifdef _DEBUG
+//		Serial.print("Rf button pressed: ");
+//		Serial.print(btn);
+//		Serial.print(", Mapped to relay: ");
+//		Serial.println(relayId);
+//#endif
+//		relayToggle(relayId);
+//		break;
+//	}
+//}
+//
+//void ButtonPressed(byte btn)
+//{
+//#ifdef _DEBUG
+//	Serial.print("Push button pressed: ");
+//	Serial.println(btn);
+//#endif
+//
+//	if (btn >= BUTTON_COUNT)
+//		return;
+//
+//	//	bool isShiftOff = !btnPin17.isPressed(false);
+//	//#ifdef _DEBUG
+//	//	Serial.print("Shift: ");
+//	//	Serial.println(!isShiftOff);
+//	//#endif
+//	bool state;
+//
+//	switch (btn)
+//	{
+//		//case BTN_HOUSE_1:
+//		//	if (isShiftOff)
+//		//		relayToggle(RELAY_LIGHT_HOUSE_FRONT);
+//		//	else
+//		//		relayToggle(RELAY_LIGHT_UPPER_YARD);
+//		//	break;
+//		//case BTN_HOUSE_2:
+//		//	if (isShiftOff)
+//		//		relayToggle(RELAY_LIGHT_FRONT_YARD);
+//		//	else
+//		//		relayToggle(RELAY_LIGHT_STADIUM);
+//		//	break;
+//		//case BTN_HOUSE_3:
+//		//	if (isShiftOff)
+//		//		relayToggle(RELAY_LIGHT_GAZEBO);
+//		//	else
+//		//		relayToggle(RELAY_LIGHT_GREEN);
+//		//	break;
+//		//case BTN_HOUSE_4:
+//		//	if (isShiftOff)
+//		//		relayToggle(RELAY_LIGHT_SIDE_YARD);
+//		//	else
+//		//		relayToggle(RELAY_XXXX);
+//		//	break;
+//		//case BTN_HOUSE_5:
+//		//	if (isShiftOff)
+//		//		relayToggle(RELAY_LIGHT_BACK_YARD);
+//		//	else
+//		//		relayToggle(RELAY_YYYY);
+//		//	break;
+//		//case BTN_HOUSE_6:
+//		//	if (isShiftOff)
+//		//		relayToggle(RELAY_LIGHT_DOWN_YARD);
+//		//	else
+//		//		relayToggle(RELAY_ZZZZ);
+//		//	break;
+//		//case BTN_HOUSE_7:
+//		//	// Shift
+//		//	break;
+//
+//	case BTN_GAZEBO_1:
+//	case BTN_OUT_1:
+//		relayToggle(RELAY_LIGHT_HOUSE_FRONT);
+//		break;
+//	case BTN_GAZEBO_2:
+//	case BTN_OUT_2:
+//		relayToggle(RELAY_LIGHT_FRONT_YARD);
+//		break;
+//	case BTN_GAZEBO_3:
+//	case BTN_OUT_3:
+//		relayToggle(RELAY_LIGHT_GAZEBO);
+//		break;
+//	case BTN_GAZEBO_4:
+//	case BTN_OUT_4:
+//		state = relayToggle(RELAY_LIGHT_SIDE_YARD);
+//		relaySet(RELAY_LIGHT_BACK_YARD, state);
+//		break;
+//	case BTN_GAZEBO_5:
+//	case BTN_OUT_5:
+//		relayToggle(RELAY_LIGHT_DOWN_YARD);
+//		break;
+//
+//	default:
+//		break;
+//	}
+//}
+//
 void relaySet(byte id, bool state)
 {
 	if (state)

@@ -22,155 +22,155 @@ char buffer[MQTT_BUFFER_SIZE];
 
 void InitEthernet()
 {
-	Serial.println(F("Starting ethernet.."));
+  Serial.println(F("Starting ethernet.."));
 
-	Ethernet.begin(mac, ip, gateway, gateway, subnet);
-	//W5100.setRetransmissionTime(0x07D0);
-	//W5100.setRetransmissionCount(3);
-	delay(2000);
+  Ethernet.begin(mac, ip, gateway, gateway, subnet);
+  //W5100.setRetransmissionTime(0x07D0);
+  //W5100.setRetransmissionCount(3);
+  delay(2000);
 
-	Serial.print(F("IP Address: "));
-	Serial.println(Ethernet.localIP());
+  Serial.print(F("IP Address: "));
+  Serial.println(Ethernet.localIP());
 
-	//Serial.print(F("Chip revision: "));
-	//Serial.println(enc.getrev());
+  //Serial.print(F("Chip revision: "));
+  //Serial.println(enc.getrev());
 }
 
 void InitMqtt()
 {
-	mqttClient.setBufferSize(320);
-	mqttClient.setSocketTimeout(5);
-	ReconnectMqtt();
+  mqttClient.setBufferSize(320);
+  mqttClient.setSocketTimeout(5);
+  ReconnectMqtt();
 }
 
 void ProcessMqtt()
 {
-	mqttClient.loop();
+  mqttClient.loop();
 }
 
 void PublishMqtt(const char* topic, const char* message, int len, boolean retained)
 {
-	if (doLog)
-	{
-		Serial.print(F("Publish. topic="));
-		Serial.print(topic);
-		Serial.print(F(", length="));
-		Serial.print(len);
+  if (doLog)
+  {
+    Serial.print(F("Publish. topic="));
+    Serial.print(topic);
+    Serial.print(F(", length="));
+    Serial.print(len);
 
-		Serial.print(F(", payload="));
-		for (int i = 0; i < len; i++)
-			Serial.print(message[i]);
-		Serial.println();
-	}
-	mqttClient.publish(topic, (const byte*)message, len, retained);
+    Serial.print(F(", payload="));
+    for (int i = 0; i < len; i++)
+      Serial.print(message[i]);
+    Serial.println();
+  }
+  mqttClient.publish(topic, (const byte*)message, len, retained);
 }
 
 void PublishAlive()
 {
-	if (!mqttClient.connected()) return;
+  if (!mqttClient.connected()) return;
 
-	const char* topic = "cha/lc/alive";
-	int len = setHexInt32(buffer, now() - 4L * SECS_PER_HOUR, 0);
-	PublishMqtt(topic, buffer, len, false);
+  const char* topic = "cha/lc/alive";
+  int len = setHexInt32(buffer, now() - 4L * SECS_PER_HOUR, 0);
+  PublishMqtt(topic, buffer, len, false);
 }
 
 void ReconnectMqtt() {
-	if (!mqttClient.connected()) {
-		Serial.print("Connecting to MQTT broker...");
+  if (!mqttClient.connected()) {
+    Serial.print("Connecting to MQTT broker...");
 
-		wdt_reset();
-		// Attempt to connect
-		if (mqttClient.connect("light", MqttUserName, MqttPassword, "hub/controller/light", 1, true, "{\"state\":\"disconnected\"}")) {
-			Serial.println("connected");
+    wdt_reset();
+    // Attempt to connect
+    if (mqttClient.connect("light", MqttUserName, MqttPassword, "hub/controller/light", 1, true, "{\"state\":\"disconnected\"}")) {
+      Serial.println("connected");
 
-			wdt_reset();
-			// Once connected, publish an announcement...
-			mqttClient.publish("hub/controller/light", "{\"state\":\"connected\"}", true);  // Publish ethernet connected status to MQTT topic
+      wdt_reset();
+      // Once connected, publish an announcement...
+      mqttClient.publish("hub/controller/light", "{\"state\":\"connected\"}", true);  // Publish ethernet connected status to MQTT topic
 
-			wdt_reset();
-			// ... and resubscribe
-			mqttClient.subscribe("chac/lc/#", 1);           // Subscribe to a MQTT topic, qos = 1
+      wdt_reset();
+      // ... and resubscribe
+      mqttClient.subscribe("chac/lc/#", 1);           // Subscribe to a MQTT topic, qos = 1
 
-			mqttClient.publish("hubcommand/gettime2", "chac/lc/settime2", false);     // request time
+      mqttClient.publish("hubcommand/gettime2", "chac/lc/settime2", false);     // request time
 
-			wdt_reset();
-			PublishSettings();
-			PublishAllStates();
-		}
-		else {
-			Serial.print("failed, rc=");
-			Serial.println(mqttClient.state());
+      wdt_reset();
+      PublishSettings();
+      PublishAllStates();
+    }
+    else {
+      Serial.print("failed, rc=");
+      Serial.println(mqttClient.state());
 
-			//      wdt_reset();
-			//
-			//      enc.powerOff();
-			//      delay(2000);
-			//      wdt_reset();
-			//
-			//      enc.powerOn();
-			//      delay(2000);
-			//      wdt_reset();
-			//
-			//      Ethernet.begin(mac, ip);
-			//      delay(2000);
-		}
-	}
-	wdt_reset();
+      //      wdt_reset();
+      //
+      //      enc.powerOff();
+      //      delay(2000);
+      //      wdt_reset();
+      //
+      //      enc.powerOn();
+      //      delay(2000);
+      //      wdt_reset();
+      //
+      //      Ethernet.begin(mac, ip);
+      //      delay(2000);
+    }
+  }
+  wdt_reset();
 }
 
 void PublishAllStates() {
-	if (!mqttClient.connected()) return;
+  if (!mqttClient.connected()) return;
 
-	doLog = false;
+  doLog = false;
 
-	for (byte id = 0; id < RELAY_COUNT; id++)
-	{
-		PublishLightState(id, isRelayOn(id));
-	}
+  for (byte id = 0; id < RELAY_COUNT; id++)
+  {
+    PublishLightState(id, isRelayOn(id));
+  }
 
-	doLog = true;
+  doLog = true;
 }
 
 void PublishLightState(byte id, bool value)
 {
-	if (!mqttClient.connected()) return;
+  if (!mqttClient.connected()) return;
 
-	char topic[12];
-	strcpy(topic, "cha/lc/rs/?");
-	topic[10] = byteToHexChar(id);
+  char topic[12];
+  strcpy(topic, "cha/lc/rs/?");
+  topic[10] = byteToHexChar(id);
 
-	PublishMqtt(topic, value ? "1" : "0", 1, true);
+  PublishMqtt(topic, value ? "1" : "0", 1, true);
 }
 
 void PublishSettings()
 {
-	if (!mqttClient.connected()) return;
+  if (!mqttClient.connected()) return;
 
-	const char* topic = "cha/lc/settings";
-	int idx = 0;
+  const char* topic = "cha/lc/settings";
+  int idx = 0;
 
-	buffer[idx++] = automaticMode ? 'T' : 'F';
-	for (byte i = 0; i < RELAY_COUNT; i++)
-	{
-		buffer[idx++] = onOffSettings[i].isActive ? 'T' : 'F';
-		idx = setHexInt16(buffer, onOffSettings[i].onOffset, idx);
-		buffer[idx++] = onOffSettings[i].offType;
-		idx = setHexInt16(buffer, onOffSettings[i].offValue, idx);
+  buffer[idx++] = automaticMode ? 'T' : 'F';
+  for (byte i = 0; i < RELAY_COUNT; i++)
+  {
+    buffer[idx++] = onOffSettings[i].isActive ? 'T' : 'F';
+    idx = setHexInt16(buffer, onOffSettings[i].onOffset, idx);
+    buffer[idx++] = onOffSettings[i].offType;
+    idx = setHexInt16(buffer, onOffSettings[i].offValue, idx);
 
-		idx = setHexInt16(buffer, onOffTimes[i].onTime, idx);
-		idx = setHexInt16(buffer, onOffTimes[i].offTime, idx);
-	}
+    idx = setHexInt16(buffer, onOffTimes[i].onTime, idx);
+    idx = setHexInt16(buffer, onOffTimes[i].offTime, idx);
+  }
 
-	PublishMqtt(topic, buffer, idx, true);
+  PublishMqtt(topic, buffer, idx, true);
 }
 
 void PublishTime()
 {
-	if (!mqttClient.connected()) return;
+  if (!mqttClient.connected()) return;
 
-	const char* topic = "cha/lc/time";
-	int len = setHexInt32(buffer, now() - 4L * SECS_PER_HOUR, 0);
-	PublishMqtt(topic, buffer, len, false);
+  const char* topic = "cha/lc/time";
+  int len = setHexInt32(buffer, now() - 4L * SECS_PER_HOUR, 0);
+  PublishMqtt(topic, buffer, len, false);
 }
 
 //void PublishNamesAndOrder()
@@ -193,118 +193,124 @@ void PublishTime()
 //}
 
 void callback(char* topic, byte* payload, unsigned int len) {
-	Serial.print("message arrived: topic='");
-	Serial.print(topic);
-	Serial.print("', length=");
-	Serial.print(len);
-	Serial.print(", payload=");
-	Serial.write(payload, len);
-	Serial.println();
+  Serial.print("message arrived: topic='");
+  Serial.print(topic);
+  Serial.print("', length=");
+  Serial.print(len);
+  Serial.print(", payload=");
+  Serial.write(payload, len);
+  Serial.println();
 
-	if (strcmp(topic, "chac/lc/alive") == 0)
-	{
-		PublishAlive();
-		return;
-	}
+  if (strcmp(topic, "chac/lc/alive") == 0)
+  {
+    PublishAlive();
+    return;
+  }
 
-	if (strcmp(topic, "chac/lc/gettime2") == 0)
-	{
-		PublishTime();
-		return;
-	}
+  if (strcmp(topic, "chac/lc/gettime2") == 0)
+  {
+    PublishTime();
+    return;
+  }
 
-	if (strcmp(topic, "chac/lc/refresh") == 0)
-	{
-		PublishAllStates();
-		return;
-	}
+  if (strcmp(topic, "chac/lc/refresh") == 0)
+  {
+    PublishAllStates();
+    return;
+  }
 
-	if (len == 0)
-		return;
+  if (len == 0)
+    return;
 
-	if (strncmp(topic, "chac/lc/state/", 14) == 0)
-	{
-		byte id = hexCharToByte(topic[14]);
-		bool value = payload[0] != '0';
-		//Serial.print("id=");
-		//Serial.print(id);
-		//Serial.print(", value=");
-		//Serial.println(value);
+  if (strncmp(topic, "chac/lc/state/", 14) == 0)
+  {
+    byte id = hexCharToByte(topic[14]);
 
-		relaySet(id, value);
-		return;
-	}
+    if (payload[0] == 'f')
+    {
+      relayToggle(id);
+      return;
+    }
+    
+    bool value = payload[0] != '0';
+    //Serial.print("id=");
+    //Serial.print(id);
+    //Serial.print(", value=");
+    //Serial.println(value);
+    relaySet(id, value);
+    return;
+  }
 
-	if (strcmp(topic, "chac/lc/mode") == 0)
-	{
-		setAutomaticMode(payload[0] == 'A');
-		saveSettings(true);
-		return;
-	}
+  if (strcmp(topic, "chac/lc/mode") == 0)
+  {
+    setAutomaticMode(payload[0] == 'A');
+    saveSettings(true);
+    return;
+  }
 
-	if (strncmp(topic, "chac/lc/settings2/", 18) == 0)
-	{
-		byte id = hexCharToByte(topic[18]);
-		char* p = (char*)payload;
+  if (strncmp(topic, "chac/lc/settings2/", 18) == 0)
+  {
+    byte id = hexCharToByte(topic[18]);
+    char* p = (char*)payload;
 
-		onOffSettings[id].isActive = *p != '0';
-		p++;
+    onOffSettings[id].isActive = *p != '0';
+    p++;
 
-		onOffSettings[id].onOffset = readHexInt16(p);
-		p += 4;
+    onOffSettings[id].onOffset = readHexInt16(p);
+    p += 4;
 
-		onOffSettings[id].offType = *p;
-		p++;
+    onOffSettings[id].offType = *p;
+    p++;
 
-		onOffSettings[id].offValue = readHexInt16(p);
-		//p += 4;
+    onOffSettings[id].offValue = readHexInt16(p);
+    //p += 4;
 
-		saveSettings(true);
+    saveSettings(true);
 
-		PublishLightState(id, isRelayOn(id));
-		return;
-	}
+    PublishLightState(id, isRelayOn(id));
+    return;
+  }
 
-	if (strcmp(topic, "chac/lc/settime2") == 0)
-	{
-		char* data = (char*)payload;
-		long tm = readHexInt32(data);
+  if (strcmp(topic, "chac/lc/settime2") == 0)
+  {
+    char* data = (char*)payload;
+    long tm = readHexInt32(data);
 
-		setTime(tm + 4L * SECS_PER_HOUR);
-		RTC.set(now());
-		printDateTime(&Serial, now());
-		Serial.println();
-		return;
-	}
+    setTime(tm + 4L * SECS_PER_HOUR);
+    RTC.set(now());
+    printDateTime(&Serial, now());
+    Serial.println();
+    return;
+  }
 
-	if (strcmp(topic, "chac/lc/settime") == 0)
-	{
-		char* data = (char*)payload;
-		int yr, month, day;
-		int hr, min, sec;
+  if (strcmp(topic, "chac/lc/settime") == 0)
+  {
+    char* data = (char*)payload;
+    int yr, month, day;
+    int hr, min, sec;
 
-		yr = 2000 + (*data++ - '0') * 10;
-		yr += (*data++ - '0');
+    yr = 2000 + (*data++ - '0') * 10;
+    yr += (*data++ - '0');
 
-		month = (*data++ - '0') * 10;
-		month += (*data++ - '0');
+    month = (*data++ - '0') * 10;
+    month += (*data++ - '0');
 
-		day = (*data++ - '0') * 10;
-		day += (*data++ - '0');
+    day = (*data++ - '0') * 10;
+    day += (*data++ - '0');
 
-		data++;
+    data++;
 
-		hr = (*data++ - '0') * 10;
-		hr += (*data++ - '0');
-		min = (*data++ - '0') * 10;
-		min += (*data++ - '0');
-		sec = (*data++ - '0') * 10;
-		sec += (*data++ - '0');
+    hr = (*data++ - '0') * 10;
+    hr += (*data++ - '0');
+    min = (*data++ - '0') * 10;
+    min += (*data++ - '0');
+    sec = (*data++ - '0') * 10;
+    sec += (*data++ - '0');
 
-		setTime(hr, min, sec, day, month, yr);
-		RTC.set(now());
-		printDateTime(&Serial, now());
-		Serial.println();
-		return;
-	}
+    setTime(hr, min, sec, day, month, yr);
+    RTC.set(now());
+    printDateTime(&Serial, now());
+    Serial.println();
+    return;
+  }
 }
