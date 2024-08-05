@@ -1,5 +1,5 @@
-#ifndef _HALIGHTRELAY
-#define _HALIGHTRELAY
+#ifndef _HALIGHTRELAY_H
+#define _HALIGHTRELAY_H
 
 #include "HALightRelay.h"
 

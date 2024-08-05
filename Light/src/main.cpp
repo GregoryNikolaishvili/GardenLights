@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "main.h"
 #include "network.h"
 
@@ -60,7 +58,7 @@ void setup() {
 
   Serial.begin(115200);
   Serial.println();
-  Serial.println(F("Initializing.. ver. 4.0.0"));
+  Serial.println(F("Initializing.. ver. 4.0.4"));
 
   pinMode(PIN_BLINKING_LED, OUTPUT);
   digitalWrite(PIN_BLINKING_LED, LOW);  // Turn on LED at start
@@ -84,7 +82,7 @@ void setup() {
   device.enableSharedAvailability();
   device.enableLastWill();
   device.setName("Light controller");
-  device.setSoftwareVersion("4.0.0");
+  device.setSoftwareVersion("4.0.4");
   device.setManufacturer("Gregory Nikolaishvili");
 
   mqtt.begin(MQTT_BROKER, MQTT_USERNAME, MQTT_PASSWORD);

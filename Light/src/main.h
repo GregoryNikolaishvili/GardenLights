@@ -1,4 +1,7 @@
-#include <arduino.h>
+#ifndef _MAIN_H
+#define _MAIN_H
+
+#include <Arduino.h>
 
 const byte RELAY_COUNT = 12;
 
@@ -34,3 +37,5 @@ const byte RELAY_LIGHT_HOUSE_FRONT = 8;
 const byte RELAY_LIGHT_FRONT_YARD = 9;
 const byte RELAY_LIGHT_BACK_YARD = 10;
 const byte RELAY_LIGHT_LOWER_YARD = 11;
+
+#endif
